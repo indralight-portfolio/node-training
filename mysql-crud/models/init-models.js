@@ -1,17 +1,17 @@
 const DataTypes = require("sequelize").DataTypes;
-const _comments = require("./comments");
-const _users = require("./users");
+const _comment = require("./comment");
+const _user = require("./user");
 
 function initModels(sequelize) {
-  const comments = _comments(sequelize, DataTypes);
-  const users = _users(sequelize, DataTypes);
+  const comment = _comment(sequelize, DataTypes);
+  const user = _user(sequelize, DataTypes);
 
-  comments.belongsTo(users, { as: "commenter_user", foreignKey: "commenter"});
-  users.hasMany(comments, { as: "comments", foreignKey: "commenter"});
+  comment.belongsTo(user, { as: "commenter_user", foreignKey: "commenter"});
+  user.hasMany(comment, { as: "comments", foreignKey: "commenter"});
 
   return {
-    comments,
-    users,
+    comment,
+    user,
   };
 }
 module.exports = initModels;

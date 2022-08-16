@@ -1,0 +1,9 @@
+{
+  "dialect": "mysql",
+  "port": 3306,
+  "omitNull": true,
+  "additional": {
+    "freezeTableName": true,
+    "timestamps": false
+  }
+}

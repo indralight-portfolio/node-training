@@ -1,9 +1,9 @@
 const Sequelize = require('sequelize');
 module.exports = (sequelize, DataTypes) => {
-  return users.init(sequelize, DataTypes);
+  return user.init(sequelize, DataTypes);
 }
 
-class users extends Sequelize.Model {
+class user extends Sequelize.Model {
   static init(sequelize, DataTypes) {
   return super.init({
     id: {
@@ -28,11 +28,17 @@ class users extends Sequelize.Model {
     comment: {
       type: DataTypes.TEXT,
       allowNull: true
+    },
+    created_at: {
+      type: DataTypes.DATE,
+      allowNull: false,
+      defaultValue: Sequelize.Sequelize.literal('CURRENT_TIMESTAMP')
     }
   }, {
     sequelize,
     tableName: 'users',
-    timestamps: true,
+    timestamps: false,
+    freezeTableName: true,
     indexes: [
       {
         name: "PRIMARY",

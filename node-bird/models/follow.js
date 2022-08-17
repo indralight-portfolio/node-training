@@ -1,19 +1,26 @@
 const Sequelize = require('sequelize');
 module.exports = function(sequelize, DataTypes) {
-  return sequelize.define('hashtag', {
-    id: {
-      autoIncrement: true,
+  return sequelize.define('follow', {
+    followingId: {
       type: DataTypes.INTEGER,
       allowNull: false,
-      primaryKey: true
+      primaryKey: true,
+      references: {
+        model: 'users',
+        key: 'id'
+      }
     },
-    title: {
-      type: DataTypes.STRING(15),
+    followerId: {
+      type: DataTypes.INTEGER,
       allowNull: false,
-      unique: "title"
+      primaryKey: true,
+      references: {
+        model: 'users',
+        key: 'id'
+      }
     }
   }, {
-    tableName: 'hashtags',
+    tableName: 'follow',
     timestamps: true,
     freezeTableName: true,
     indexes: [
@@ -22,15 +29,15 @@ module.exports = function(sequelize, DataTypes) {
         unique: true,
         using: "BTREE",
         fields: [
-          { name: "id" },
+          { name: "followingId" },
+          { name: "followerId" },
         ]
       },
       {
-        name: "title",
-        unique: true,
+        name: "followerId",
         using: "BTREE",
         fields: [
-          { name: "title" },
+          { name: "followerId" },
         ]
       },
     ]

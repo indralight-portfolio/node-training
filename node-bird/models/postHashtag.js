@@ -1,30 +1,26 @@
 const Sequelize = require('sequelize');
 module.exports = function(sequelize, DataTypes) {
-  return sequelize.define('post', {
-    id: {
-      autoIncrement: true,
+  return sequelize.define('postHashtag', {
+    postId: {
       type: DataTypes.INTEGER,
       allowNull: false,
-      primaryKey: true
-    },
-    content: {
-      type: DataTypes.STRING(140),
-      allowNull: false
-    },
-    img: {
-      type: DataTypes.STRING(200),
-      allowNull: true
-    },
-    userId: {
-      type: DataTypes.INTEGER,
-      allowNull: true,
+      primaryKey: true,
       references: {
-        model: 'users',
+        model: 'posts',
+        key: 'id'
+      }
+    },
+    hashtagId: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      primaryKey: true,
+      references: {
+        model: 'hashtags',
         key: 'id'
       }
     }
   }, {
-    tableName: 'posts',
+    tableName: 'postHashtag',
     timestamps: true,
     freezeTableName: true,
     indexes: [
@@ -33,14 +29,15 @@ module.exports = function(sequelize, DataTypes) {
         unique: true,
         using: "BTREE",
         fields: [
-          { name: "id" },
+          { name: "postId" },
+          { name: "hashtagId" },
         ]
       },
       {
-        name: "UserId",
+        name: "postHashtag_ibfk_2",
         using: "BTREE",
         fields: [
-          { name: "userId" },
+          { name: "hashtagId" },
         ]
       },
     ]

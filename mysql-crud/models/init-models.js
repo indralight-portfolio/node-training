@@ -6,10 +6,8 @@ function initModels(sequelize) {
   const comment = _comment(sequelize, DataTypes);
   const user = _user(sequelize, DataTypes);
 
-  comment.belongsTo(user, { as: "commenter_user", foreignKey: "commenter" });
-  user.hasMany(comment, { as: "comments", foreignKey: "commenter" });
-
-  user.findOne;
+  comment.belongsTo(user, { as: "commenter_user", foreignKey: "commenter"});
+  user.hasMany(comment, { as: "comments", foreignKey: "commenter"});
 
   return {
     comment,

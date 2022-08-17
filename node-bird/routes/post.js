@@ -18,24 +18,34 @@ try {
 
 const upload = multer({
   storage: multer.diskStorage({
-    destination:(req, file, cb) {
+    destination(req, file, cb) {
       cb(null, 'uploads/');
-    },    
-    filename: (req,file,cb) {
-      const ext = path.extname(file.originalname);      
+    },
+    filename(req, file, cb) {
+      const ext = path.extname(file.originalname);
       cb(null, path.basename(file.originalname, ext) + Date.now() + ext);
-    }
+    },
   }),
   limits: { fileSize: 5 * 1024 * 1024 },
 });
 
 router.post('/img', isLoggedIn, upload.single('img'), (req, res) => {
   console.log(req.file);
-  res.json({ url : `/img/${req.file.filename}`});
+  res.json({ url: `/img/${req.file.filename}` });
 });
 
-router.get('/join', isNotLoggedIn, (req, res) => {
-  res.render('join', { title: '회원가입 - NodeBird' });
+const upload2 = multer();
+
+router.post('/', isNotLoggedIn, upload2.none(), async (req, res, next) => {
+  try {
+    const post = await Post.findOrCreate({
+      content: req.body.content,
+      img: req.body.url,
+      UserId: req.user.id,
+    });
+  } catch (error) {
+    console.log(err);
+  }
 });
 
 router.get('/', (req, res) => {

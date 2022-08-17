@@ -1,53 +1,56 @@
 const Sequelize = require('sequelize');
-
-module.exports = class User extends Sequelize.Model {
-  static init(sequelize) {
-    return super.init({
-      email: {
-        type: Sequelize.STRING(40),
-        allowNull: true,
+module.exports = function(sequelize, DataTypes) {
+  return sequelize.define('user', {
+    id: {
+      autoIncrement: true,
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      primaryKey: true
+    },
+    email: {
+      type: DataTypes.STRING(40),
+      allowNull: true,
+      unique: "email"
+    },
+    nick: {
+      type: DataTypes.STRING(15),
+      allowNull: false
+    },
+    password: {
+      type: DataTypes.STRING(100),
+      allowNull: true
+    },
+    provider: {
+      type: DataTypes.STRING(10),
+      allowNull: false,
+      defaultValue: "local"
+    },
+    snsId: {
+      type: DataTypes.STRING(30),
+      allowNull: true
+    }
+  }, {
+    tableName: 'users',
+    timestamps: true,
+    paranoid: true,
+    freezeTableName: true,
+    indexes: [
+      {
+        name: "PRIMARY",
         unique: true,
+        using: "BTREE",
+        fields: [
+          { name: "id" },
+        ]
       },
-      nick: {
-        type: Sequelize.STRING(15),
-        allowNull: false,
+      {
+        name: "email",
+        unique: true,
+        using: "BTREE",
+        fields: [
+          { name: "email" },
+        ]
       },
-      password: {
-        type: Sequelize.STRING(100),
-        allowNull: true,
-      },
-      provider: {
-        type: Sequelize.STRING(10),
-        allowNull: false,
-        defaultValue: 'local',
-      },
-      snsId: {
-        type: Sequelize.STRING(30),
-        allowNull: true,
-      },
-    }, {
-      sequelize,
-      timestamps: true,
-      underscored: false,
-      modelName: 'User',
-      tableName: 'users',
-      paranoid: true,
-      charset: 'utf8',
-      collate: 'utf8_general_ci',
-    });
-  }
-
-  static associate(db) {
-    db.User.hasMany(db.Post);
-    db.User.belongsToMany(db.User, {
-      foreignKey: 'followingId',
-      as: 'Followers',
-      through: 'Follow',
-    });
-    db.User.belongsToMany(db.User, {
-      foreignKey: 'followerId',
-      as: 'Followings',
-      through: 'Follow',
-    });
-  }
+    ]
+  });
 };

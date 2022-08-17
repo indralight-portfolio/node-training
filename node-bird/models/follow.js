@@ -1,6 +1,11 @@
 const Sequelize = require('sequelize');
-module.exports = function(sequelize, DataTypes) {
-  return sequelize.define('follow', {
+module.exports = (sequelize, DataTypes) => {
+  return follow.init(sequelize, DataTypes);
+}
+
+class follow extends Sequelize.Model {
+  static init(sequelize, DataTypes) {
+  return super.init({
     followingId: {
       type: DataTypes.INTEGER,
       allowNull: false,
@@ -20,6 +25,7 @@ module.exports = function(sequelize, DataTypes) {
       }
     }
   }, {
+    sequelize,
     tableName: 'follow',
     timestamps: true,
     freezeTableName: true,
@@ -42,4 +48,5 @@ module.exports = function(sequelize, DataTypes) {
       },
     ]
   });
-};
+  }
+}

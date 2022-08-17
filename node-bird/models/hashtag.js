@@ -1,6 +1,11 @@
 const Sequelize = require('sequelize');
-module.exports = function(sequelize, DataTypes) {
-  return sequelize.define('hashtag', {
+module.exports = (sequelize, DataTypes) => {
+  return hashtag.init(sequelize, DataTypes);
+}
+
+class hashtag extends Sequelize.Model {
+  static init(sequelize, DataTypes) {
+  return super.init({
     id: {
       autoIncrement: true,
       type: DataTypes.INTEGER,
@@ -13,6 +18,7 @@ module.exports = function(sequelize, DataTypes) {
       unique: "title"
     }
   }, {
+    sequelize,
     tableName: 'hashtags',
     timestamps: true,
     freezeTableName: true,
@@ -35,4 +41,5 @@ module.exports = function(sequelize, DataTypes) {
       },
     ]
   });
-};
+  }
+}

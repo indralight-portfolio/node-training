@@ -8,8 +8,10 @@
   "directory": "./models",
   "omitNull": true,
   "additional": {
-    "freezeTableName": true
+    "freezeTableName": true,
+    "timestamps": true
   },
   "singularize": true,
-  "useDefine": true
+  "useDefine": false,
+  "lang": "es6"
 }

@@ -1,6 +1,11 @@
 const Sequelize = require('sequelize');
-module.exports = function(sequelize, DataTypes) {
-  return sequelize.define('post', {
+module.exports = (sequelize, DataTypes) => {
+  return post.init(sequelize, DataTypes);
+}
+
+class post extends Sequelize.Model {
+  static init(sequelize, DataTypes) {
+  return super.init({
     id: {
       autoIncrement: true,
       type: DataTypes.INTEGER,
@@ -24,6 +29,7 @@ module.exports = function(sequelize, DataTypes) {
       }
     }
   }, {
+    sequelize,
     tableName: 'posts',
     timestamps: true,
     freezeTableName: true,
@@ -45,4 +51,5 @@ module.exports = function(sequelize, DataTypes) {
       },
     ]
   });
-};
+  }
+}

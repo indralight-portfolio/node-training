@@ -3,9 +3,8 @@ const multer = require('multer');
 const path = require('path');
 const fs = require('fs');
 
-const { Post, HashTag } = require('../models');
+const { post, hashtag, postHashtag } = require('../models').Models;
 const { isLoggedIn } = require('./middlewares');
-const db = require('../models');
 
 const router = express.Router();
 
@@ -36,15 +35,26 @@ router.post('/img', isLoggedIn, upload.single('img'), (req, res) => {
 
 const upload2 = multer();
 
-router.post('/', isNotLoggedIn, upload2.none(), async (req, res, next) => {
+router.post('/', isLoggedIn, upload2.none(), async (req, res, next) => {
   try {
-    const post = await Post.findOrCreate({
+    const post_ = await post.create({
       content: req.body.content,
       img: req.body.url,
-      UserId: req.user.id,
+      userId: req.user.id,
     });
+    const hashtags = req.body.content.match(/#[^\s#]+/g);
+    if (hashtags) {
+      const result = await Promise.all(
+        hashtags.map((tag) => {
+          return hashtag.findOrCreate({
+            where: { title: tag.slice(1).toLowerCase() },
+          });
+        })
+      );
+      await post_.addHashtags(result.map((r) => r[0]));
+    }
   } catch (error) {
-    console.log(err);
+    console.log(error);
   }
 });
 
@@ -52,5 +62,14 @@ router.get('/', (req, res) => {
   const twits = [];
   res.render('main', { title: 'NodeBird', twits });
 });
+
+post.prototype.addHashtags = async function (hashtags) {
+  for (const hashtag_ of hashtags) {
+    await postHashtag.create({
+      postId: this.id,
+      hashtagId: hashtag_.id,
+    });
+  }
+};
 
 module.exports = router;

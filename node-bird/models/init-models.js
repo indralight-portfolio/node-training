@@ -1,16 +1,16 @@
-var DataTypes = require("sequelize").DataTypes;
-var _follow = require("./follow");
-var _hashtag = require("./hashtag");
-var _postHashtag = require("./postHashtag");
-var _post = require("./post");
-var _user = require("./user");
+const DataTypes = require("sequelize").DataTypes;
+const _follow = require("./follow");
+const _hashtag = require("./hashtag");
+const _postHashtag = require("./postHashtag");
+const _post = require("./post");
+const _user = require("./user");
 
 function initModels(sequelize) {
-  var follow = _follow(sequelize, DataTypes);
-  var hashtag = _hashtag(sequelize, DataTypes);
-  var postHashtag = _postHashtag(sequelize, DataTypes);
-  var post = _post(sequelize, DataTypes);
-  var user = _user(sequelize, DataTypes);
+  const follow = _follow(sequelize, DataTypes);
+  const hashtag = _hashtag(sequelize, DataTypes);
+  const postHashtag = _postHashtag(sequelize, DataTypes);
+  const post = _post(sequelize, DataTypes);
+  const user = _user(sequelize, DataTypes);
 
   hashtag.belongsToMany(post, { as: 'postId_posts', through: postHashtag, foreignKey: "hashtagId", otherKey: "postId" });
   post.belongsToMany(hashtag, { as: 'hashtagId_hashtags', through: postHashtag, foreignKey: "postId", otherKey: "hashtagId" });

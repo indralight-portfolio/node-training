@@ -9,9 +9,8 @@ const sequelize = new Sequelize(config);
 
 db.sequelize = sequelize;
 
-var models = initModels(sequelize);
+const models = initModels(sequelize);
 
-db.User = models.user;
-db.Comment = models.comment;
+db.Models = models;
 
 module.exports = db;

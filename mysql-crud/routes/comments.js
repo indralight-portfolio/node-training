@@ -1,16 +1,17 @@
 const express = require("express");
-const { User, Comment } = require("../models");
+const { Models } = require("../models");
+const comment = Models.comment;
 
 const router = express.Router();
 
 router.route("/").post(async (req, res, next) => {
   try {
-    const comment = await Comment.create({
+    const comment_ = await comment.create({
       commenter: req.body.id,
       comment: req.body.comment,
     });
-    console.log(comment);
-    res.status(201).json(comment);
+    console.log(comment_);
+    res.status(201).json(comment_);
   } catch (err) {
     console.log(err);
     next(err);
@@ -21,7 +22,7 @@ router
   .route("/:id")
   .patch(async (req, res, next) => {
     try {
-      const result = await Comment.update(
+      const result = await comment.update(
         { comment: req.body.comment },
         { where: { id: req.params.id } }
       );
@@ -33,7 +34,7 @@ router
   })
   .delete(async (req, res, next) => {
     try {
-      var result = await Comment.destroy({ where: { id: req.params.id } });
+      var result = await comment.destroy({ where: { id: req.params.id } });
       res.json(result);
     } catch (err) {
       console.log(err);

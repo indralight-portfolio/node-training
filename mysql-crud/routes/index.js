@@ -1,11 +1,11 @@
 const express = require("express");
-const { User } = require("../models");
+const { user } = require("../models").Models;
 
 const router = express.Router();
 
 router.get("/", async (req, res, next) => {
   try {
-    const users = await User.findAll();
+    const users = await user.findAll();
     res.render("sequelize", { users });
   } catch (err) {
     console.error(err);

@@ -1,5 +1,5 @@
 const express = require("express");
-const { User, Comment } = require("../models");
+const { user, comment } = require("../models").Models;
 
 const router = express.Router();
 
@@ -7,7 +7,7 @@ router
   .route("/")
   .get(async (req, res, next) => {
     try {
-      const users = await User.findAll();
+      const users = await user.findAll();
       res.json(users);
     } catch (err) {
       console.log(err);
@@ -16,13 +16,13 @@ router
   })
   .post(async (req, res, next) => {
     try {
-      const user = await User.create({
+      const user_ = await user.create({
         name: req.body.name,
         age: req.body.age,
         married: req.body.married,
       });
-      console.log(user);
-      res.status(201).json(user);
+      console.log(user_);
+      res.status(201).json(user_);
     } catch (err) {
       console.log(err);
       next(err);
@@ -31,9 +31,9 @@ router
 
 router.get("/:id/comments", async (req, res, next) => {
   try {
-    const comments = await Comment.findAll({
+    const comments = await comment.findAll({
       include: {
-        model: User,
+        model: user,
         as: "commenter_user",
         where: {
           id: req.params.id,

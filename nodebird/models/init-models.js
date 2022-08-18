@@ -1,38 +1,43 @@
 const DataTypes = require("sequelize").DataTypes;
-const _follow = require("./follow");
-const _hashtag = require("./hashtag");
-const _postHashtag = require("./postHashtag");
-const _post = require("./post");
-const _user = require("./user");
+const _Domain = require("./domain");
+const _Follow = require("./follow");
+const _Hashtag = require("./hashtag");
+const _PostHashtag = require("./postHashtag");
+const _Post = require("./post");
+const _User = require("./user");
 
 function initModels(sequelize) {
-  const follow = _follow(sequelize, DataTypes);
-  const hashtag = _hashtag(sequelize, DataTypes);
-  const postHashtag = _postHashtag(sequelize, DataTypes);
-  const post = _post(sequelize, DataTypes);
-  const user = _user(sequelize, DataTypes);
+  const Domain = _Domain(sequelize, DataTypes);
+  const Follow = _Follow(sequelize, DataTypes);
+  const Hashtag = _Hashtag(sequelize, DataTypes);
+  const PostHashtag = _PostHashtag(sequelize, DataTypes);
+  const Post = _Post(sequelize, DataTypes);
+  const User = _User(sequelize, DataTypes);
 
-  hashtag.belongsToMany(post, { as: 'postId_posts', through: postHashtag, foreignKey: "hashtagId", otherKey: "postId" });
-  post.belongsToMany(hashtag, { as: 'hashtagId_hashtags', through: postHashtag, foreignKey: "postId", otherKey: "hashtagId" });
-  user.belongsToMany(user, { as: 'followerId_users', through: follow, foreignKey: "followingId", otherKey: "followerId" });
-  user.belongsToMany(user, { as: 'followingId_users', through: follow, foreignKey: "followerId", otherKey: "followingId" });
-  postHashtag.belongsTo(hashtag, { as: "hashtag", foreignKey: "hashtagId"});
-  hashtag.hasMany(postHashtag, { as: "postHashtags", foreignKey: "hashtagId"});
-  postHashtag.belongsTo(post, { as: "post", foreignKey: "postId"});
-  post.hasMany(postHashtag, { as: "postHashtags", foreignKey: "postId"});
-  follow.belongsTo(user, { as: "following", foreignKey: "followingId"});
-  user.hasMany(follow, { as: "follows", foreignKey: "followingId"});
-  follow.belongsTo(user, { as: "follower", foreignKey: "followerId"});
-  user.hasMany(follow, { as: "follower_follows", foreignKey: "followerId"});
-  post.belongsTo(user, { as: "user", foreignKey: "userId"});
-  user.hasMany(post, { as: "posts", foreignKey: "userId"});
+  Hashtag.belongsToMany(Post, { as: 'postId_posts', through: PostHashtag, foreignKey: "hashtagId", otherKey: "postId" });
+  Post.belongsToMany(Hashtag, { as: 'hashtagId_hashtags', through: PostHashtag, foreignKey: "postId", otherKey: "hashtagId" });
+  User.belongsToMany(User, { as: 'followerId_users', through: Follow, foreignKey: "followingId", otherKey: "followerId" });
+  User.belongsToMany(User, { as: 'followingId_users', through: Follow, foreignKey: "followerId", otherKey: "followingId" });
+  PostHashtag.belongsTo(Hashtag, { as: "hashtag", foreignKey: "hashtagId"});
+  Hashtag.hasMany(PostHashtag, { as: "postHashtags", foreignKey: "hashtagId"});
+  PostHashtag.belongsTo(Post, { as: "post", foreignKey: "postId"});
+  Post.hasMany(PostHashtag, { as: "postHashtags", foreignKey: "postId"});
+  Domain.belongsTo(User, { as: "user", foreignKey: "userId"});
+  User.hasMany(Domain, { as: "domains", foreignKey: "userId"});
+  Follow.belongsTo(User, { as: "following", foreignKey: "followingId"});
+  User.hasMany(Follow, { as: "follows", foreignKey: "followingId"});
+  Follow.belongsTo(User, { as: "follower", foreignKey: "followerId"});
+  User.hasMany(Follow, { as: "follower_follows", foreignKey: "followerId"});
+  Post.belongsTo(User, { as: "user", foreignKey: "userId"});
+  User.hasMany(Post, { as: "posts", foreignKey: "userId"});
 
   return {
-    follow,
-    hashtag,
-    postHashtag,
-    post,
-    user,
+    Domain,
+    Follow,
+    Hashtag,
+    PostHashtag,
+    Post,
+    User,
   };
 }
 module.exports = initModels;

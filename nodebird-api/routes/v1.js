@@ -56,7 +56,7 @@ router.get('/test', verifyToken, async (req, res) => {
 
 router.get('/posts/my', verifyToken, async (req, res) => {
   try {
-    const posts = await post.findAll({ where: { userId: req.decoded.id } });
+    const posts = await Post.findAll({ where: { userId: req.decoded.id } });
     console.log(post);
     return res.json({
       code: 200,
@@ -73,7 +73,7 @@ router.get('/posts/my', verifyToken, async (req, res) => {
 
 router.get('/posts/hashtag/:title', verifyToken, async (req, res) => {
   try {
-    const hashtag_ = await hashtag.findOne({
+    const hashtag_ = await Hashtag.findOne({
       where: { title: req.params.title },
     });
     if (!hashtag_) {
@@ -103,7 +103,7 @@ Hashtag.prototype.getPosts = async function (option) {
     attributes: ['hashtagId'],
   });
   option.where = { '$postHashtags.hashtagId$': this.id };
-  return await post.findAll(option);
+  return await Post.findAll(option);
 };
 
 module.exports = router;

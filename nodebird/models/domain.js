@@ -1,9 +1,9 @@
 const Sequelize = require('sequelize');
 module.exports = (sequelize, DataTypes) => {
-  return Post.init(sequelize, DataTypes);
+  return Domain.init(sequelize, DataTypes);
 }
 
-class Post extends Sequelize.Model {
+class Domain extends Sequelize.Model {
   static init(sequelize, DataTypes) {
   return super.init({
     id: {
@@ -12,13 +12,17 @@ class Post extends Sequelize.Model {
       allowNull: false,
       primaryKey: true
     },
-    content: {
-      type: DataTypes.STRING(140),
+    host: {
+      type: DataTypes.STRING(80),
       allowNull: false
     },
-    img: {
-      type: DataTypes.STRING(200),
-      allowNull: true
+    type: {
+      type: DataTypes.ENUM('free','premium'),
+      allowNull: false
+    },
+    clientSecret: {
+      type: DataTypes.CHAR(36),
+      allowNull: false
     },
     userId: {
       type: DataTypes.INTEGER,
@@ -30,8 +34,9 @@ class Post extends Sequelize.Model {
     }
   }, {
     sequelize,
-    tableName: 'posts',
+    tableName: 'domains',
     timestamps: true,
+    paranoid: true,
     freezeTableName: true,
     indexes: [
       {
@@ -43,7 +48,7 @@ class Post extends Sequelize.Model {
         ]
       },
       {
-        name: "UserId",
+        name: "userId",
         using: "BTREE",
         fields: [
           { name: "userId" },

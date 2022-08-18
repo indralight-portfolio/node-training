@@ -1,9 +1,9 @@
 const Sequelize = require('sequelize');
 module.exports = (sequelize, DataTypes) => {
-  return user.init(sequelize, DataTypes);
+  return User.init(sequelize, DataTypes);
 }
 
-class user extends Sequelize.Model {
+class User extends Sequelize.Model {
   static init(sequelize, DataTypes) {
   return super.init({
     id: {

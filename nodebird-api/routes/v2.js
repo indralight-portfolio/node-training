@@ -4,15 +4,15 @@ const cors = require('cors');
 const url = require('url');
 
 const { verifyToken, apiLimiter } = require('./middlewares');
-const { domain, user, post, hashtag } = require('../models').Models;
+const { Domain, User, Post, Hashtag } = require('../models').Models;
 
 const router = express.Router();
 
 router.use(async (req, res, next) => {
-  const domain_ = await domain.findOne({
+  const domain = await Domain.findOne({
     where: { host: url.parse(req.get('origin') || 'localhost').host },
   });
-  if (domain_) {
+  if (domain) {
     cors({
       origin: req.get('origin'),
       credentials: true,
@@ -64,7 +64,7 @@ router.use(async (req, res, next) => {
 router.post('/token', apiLimiter, async (req, res) => {
   const { clientSecret } = req.body;
   try {
-    const domain_ = await domain.findOne({
+    const domain = await Domain.findOne({
       where: { clientSecret },
       include: {
         model: user,
@@ -72,7 +72,7 @@ router.post('/token', apiLimiter, async (req, res) => {
         attribute: ['nick', 'id'],
       },
     });
-    if (!domain_) {
+    if (!domain) {
       return res.status(401).json({
         code: 401,
         message: '등록되지 않은 도메인입니다.',
@@ -80,8 +80,8 @@ router.post('/token', apiLimiter, async (req, res) => {
     }
     const token = jwt.sign(
       {
-        id: domain_.user.id,
-        nick: domain_.user.nick,
+        id: domain.user.id,
+        nick: domain.user.nick,
       },
       process.env.JWT_SECRET,
       {
@@ -109,7 +109,7 @@ router.get('/test', verifyToken, apiLimiter, async (req, res) => {
 
 router.get('/posts/my', verifyToken, apiLimiter, async (req, res) => {
   try {
-    const posts = await post.findAll({ where: { userId: req.decoded.id } });
+    const posts = await Post.findAll({ where: { userId: req.decoded.id } });
     return res.json({
       code: 200,
       payload: posts,
@@ -129,10 +129,10 @@ router.get(
   apiLimiter,
   async (req, res) => {
     try {
-      const hashtag_ = await hashtag.findOne({
+      const hashtag = await Hashtag.findOne({
         where: { title: req.params.title },
       });
-      if (!hashtag_) {
+      if (!hashtag) {
         return res.json({
           code: 404,
           message: '검색결과가 없습니다.',
@@ -153,9 +153,9 @@ router.get(
   }
 );
 
-hashtag.prototype.getPosts = async function (option) {
+Hashtag.prototype.getPosts = async function (option) {
   option.include.push({
-    model: postHashtag,
+    model: PostHashtag,
     as: 'postHashtags',
     attributes: ['hashtagId'],
   });

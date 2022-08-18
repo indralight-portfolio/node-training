@@ -13,5 +13,6 @@
   },
   "singularize": true,
   "useDefine": false,
+  "caseModel": "p",
   "lang": "es6"
 }

@@ -1,9 +1,9 @@
 const Sequelize = require('sequelize');
 module.exports = (sequelize, DataTypes) => {
-  return follow.init(sequelize, DataTypes);
+  return Follow.init(sequelize, DataTypes);
 }
 
-class follow extends Sequelize.Model {
+class Follow extends Sequelize.Model {
   static init(sequelize, DataTypes) {
   return super.init({
     followingId: {

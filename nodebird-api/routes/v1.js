@@ -2,7 +2,7 @@ const express = require('express');
 const jwt = require('jsonwebtoken');
 
 const { verifyToken, deprecated } = require('./middlewares');
-const { domain, user, post, hashtag } = require('../models').Models;
+const { Domain, User, Post, Hashtag } = require('../models').Models;
 
 const router = express.Router();
 
@@ -11,15 +11,15 @@ router.use(deprecated);
 router.post('/token', async (req, res) => {
   const { clientSecret } = req.body;
   try {
-    const domain_ = await domain.findOne({
+    const domain = await Domain.findOne({
       where: { clientSecret },
       include: {
-        model: user,
+        model: User,
         as: 'user',
         attribute: ['nick', 'id'],
       },
     });
-    if (!domain_) {
+    if (!domain) {
       return res.status(401).json({
         code: 401,
         message: '등록되지 않은 도메인입니다.',
@@ -27,8 +27,8 @@ router.post('/token', async (req, res) => {
     }
     const token = jwt.sign(
       {
-        id: domain_.user.id,
-        nick: domain_.user.nick,
+        id: domain.user.id,
+        nick: domain.user.nick,
       },
       process.env.JWT_SECRET,
       {
@@ -96,7 +96,7 @@ router.get('/posts/hashtag/:title', verifyToken, async (req, res) => {
   }
 });
 
-hashtag.prototype.getPosts = async function (option) {
+Hashtag.prototype.getPosts = async function (option) {
   option.include.push({
     model: postHashtag,
     as: 'postHashtags',

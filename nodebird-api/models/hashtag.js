@@ -1,9 +1,9 @@
 const Sequelize = require('sequelize');
 module.exports = (sequelize, DataTypes) => {
-  return hashtag.init(sequelize, DataTypes);
+  return Hashtag.init(sequelize, DataTypes);
 }
 
-class hashtag extends Sequelize.Model {
+class Hashtag extends Sequelize.Model {
   static init(sequelize, DataTypes) {
   return super.init({
     id: {

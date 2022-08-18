@@ -1,6 +1,6 @@
 const express = require('express');
 const { isLoggedIn, isNotLoggedIn } = require('./middlewares');
-const { post, user, hashtag, postHashtag } = require('../models').Models;
+const { Post, User, Hashtag, PostHashtag } = require('../models').Models;
 
 const router = express.Router();
 
@@ -24,9 +24,9 @@ router.get('/join', isNotLoggedIn, (req, res) => {
 
 router.get('/', async (req, res, next) => {
   try {
-    const posts = await post.findAll({
+    const posts = await Post.findAll({
       include: {
-        model: user,
+        model: User,
         as: 'user',
         attributes: ['id', 'nick'],
       },
@@ -45,11 +45,11 @@ router.get('/hashtag', async (req, res, next) => {
     return res.redirect('/');
   }
   try {
-    const hashtag_ = await hashtag.findOne({ where: { title: query } });
+    const hashtag = await Hashtag.findOne({ where: { title: query } });
     let posts = [];
-    if (hashtag_) {
-      posts = await hashtag_.getPosts({
-        include: [{ model: user, as: 'user' }],
+    if (hashtag) {
+      posts = await hashtag.getPosts({
+        include: [{ model: User, as: 'user' }],
       });
     }
 
@@ -63,14 +63,14 @@ router.get('/hashtag', async (req, res, next) => {
   }
 });
 
-hashtag.prototype.getPosts = async function (option) {
+Hashtag.prototype.getPosts = async function (option) {
   option.include.push({
-    model: postHashtag,
+    model: PostHashtag,
     as: 'postHashtags',
     attributes: ['hashtagId'],
   });
   option.where = { '$postHashtags.hashtagId$': this.id };
-  return await post.findAll(option);
+  return await Post.findAll(option);
 };
 
 module.exports = router;

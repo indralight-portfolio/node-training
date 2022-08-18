@@ -42,8 +42,6 @@
       {% if user.id > 0 and twit.user.id !== user.id and not
       followerIdList.includes(twit.user.id) %}
       <button class="twit-follow">팔로우하기</button>
-      {% elseif user.id > 0 and twit.user.id !== user.id %}
-      <button class="twit-notfollow">팔로잉끊기</button>
       {% endif %}
       <div class="twit-content">{{twit.content}}</div>
       {% if twit.img %}
@@ -101,24 +99,6 @@
                 console.error(err);
               });
           }
-        }
-      }
-    });
-  });
-  document.querySelectorAll('.twit-notfollow').forEach(function (tag) {
-    tag.addEventListener('click', function () {
-      const twitId = document.querySelector('#my-id');
-      if (myId) {
-        const userId = tag.parentNode.querySelector('.twit-id').value;
-        if (confirm('팔로잉을 끊으시겠습니까?')) {
-          axios
-            .post(`/user/${userId}/notfollow`)
-            .then(() => {
-              location.reload();
-            })
-            .catch((err) => {
-              console.error(err);
-            });
         }
       }
     });

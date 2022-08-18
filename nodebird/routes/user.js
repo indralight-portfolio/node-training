@@ -1,13 +1,13 @@
 const express = require('express');
 
-const { user, follow } = require('../models').Models;
+const { User, Follow } = require('../models').Models;
 const { isLoggedIn } = require('./middlewares');
 
 const router = express.Router();
 
 router.post('/:id/follow', isLoggedIn, async (req, res, next) => {
   try {
-    const user_ = await user.findOne({ where: { id: req.user.id } });
+    const user_ = await User.findOne({ where: { id: req.user.id } });
     if (user_) {
       await user_.addFollowing(parseInt(req.params.id, 10));
       res.send('success');
@@ -22,9 +22,9 @@ router.post('/:id/follow', isLoggedIn, async (req, res, next) => {
 
 router.post('/:id/notfollow', isLoggedIn, async (req, res, next) => {
   try {
-    const user_ = await user.findOne({ where: { id: req.user.id } });
-    if (user_) {
-      await user_.removeFollower(parseInt(req.params.id, 10));
+    const user = await User.findOne({ where: { id: req.user.id } });
+    if (user) {
+      await user.removeFollower(parseInt(req.params.id, 10));
       res.send('success');
     } else {
       res.status(404).send('no user');
@@ -35,15 +35,15 @@ router.post('/:id/notfollow', isLoggedIn, async (req, res, next) => {
   }
 });
 
-user.prototype.addFollowing = async function (id) {
-  await follow.create({
+User.prototype.addFollowing = async function (id) {
+  await Follow.create({
     followerId: this.id,
     followingId: id,
   });
 };
 
-user.prototype.removeFollower = async function (id) {
-  await follow.destroy({
+User.prototype.removeFollower = async function (id) {
+  await Follow.destroy({
     where: {
       followerId: this.id,
       followingId: id,

@@ -5,6 +5,9 @@
     {% if user.followingId_users %} {% for following in user.followingId_users
     %}
     <div>{{following.nick}}</div>
+    <button class="twit-notfollow" data-id="{{following.id}}">
+      팔로잉 끊기
+    </button>
     {% endfor %} {% endif %}
   </div>
   <div class="followers half">
@@ -14,4 +17,25 @@
     {% endfor %} {% endif %}
   </div>
 </div>
+{% endblock %} {% block script %}
+<script>
+  document.querySelectorAll('.twit-notfollow').forEach(function (tag) {
+    tag.addEventListener('click', function () {
+      const myId = document.querySelector('#my-id');
+      if (myId) {
+        const userId = tag.getAttribute('data-id');
+        if (confirm('팔로잉을 끊으시겠습니까?')) {
+          axios
+            .post(`/user/${userId}/notfollow`)
+            .then(() => {
+              location.reload();
+            })
+            .catch((err) => {
+              console.error(err);
+            });
+        }
+      }
+    });
+  });
+</script>
 {% endblock %}

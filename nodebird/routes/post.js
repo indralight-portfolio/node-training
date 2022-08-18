@@ -3,7 +3,7 @@ const multer = require('multer');
 const path = require('path');
 const fs = require('fs');
 
-const { post, hashtag, postHashtag } = require('../models').Models;
+const { Post, Hashtag, PostHashtag } = require('../models').Models;
 const { isLoggedIn } = require('./middlewares');
 const { route } = require('./user');
 
@@ -38,7 +38,7 @@ const upload2 = multer();
 
 router.post('/', isLoggedIn, upload2.none(), async (req, res, next) => {
   try {
-    const post_ = await post.create({
+    const post_ = await Post.create({
       content: req.body.content,
       img: req.body.url,
       userId: req.user.id,
@@ -47,7 +47,7 @@ router.post('/', isLoggedIn, upload2.none(), async (req, res, next) => {
     if (hashtags) {
       const result = await Promise.all(
         hashtags.map((tag) => {
-          return hashtag.findOrCreate({
+          return Hashtag.findOrCreate({
             where: { title: tag.slice(1).toLowerCase() },
           });
         })
@@ -67,7 +67,7 @@ router.get('/', (req, res) => {
 
 router.post('/:id/delete', async (req, res, next) => {
   try {
-    await post.destroy({ where: { id: req.params.id } });
+    await Post.destroy({ where: { id: req.params.id } });
     res.send('success');
   } catch (error) {
     console.log(error);
@@ -75,9 +75,9 @@ router.post('/:id/delete', async (req, res, next) => {
   }
 });
 
-post.prototype.addHashtags = async function (hashtags) {
+Post.prototype.addHashtags = async function (hashtags) {
   for (const hashtag_ of hashtags) {
-    await postHashtag.create({
+    await PostHashtag.create({
       postId: this.id,
       hashtagId: hashtag_.id,
     });

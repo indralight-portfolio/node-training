@@ -20,10 +20,34 @@ router.post('/:id/follow', isLoggedIn, async (req, res, next) => {
   }
 });
 
+router.post('/:id/notfollow', isLoggedIn, async (req, res, next) => {
+  try {
+    const user_ = await user.findOne({ where: { id: req.user.id } });
+    if (user_) {
+      await user_.removeFollower(parseInt(req.params.id, 10));
+      res.send('success');
+    } else {
+      res.status(404).send('no user');
+    }
+  } catch (error) {
+    console.error(error);
+    next(error);
+  }
+});
+
 user.prototype.addFollowing = async function (id) {
   await follow.create({
     followerId: this.id,
     followingId: id,
+  });
+};
+
+user.prototype.removeFollower = async function (id) {
+  await follow.destroy({
+    where: {
+      followerId: this.id,
+      followingId: id,
+    },
   });
 };
 

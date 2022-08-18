@@ -5,6 +5,7 @@ const fs = require('fs');
 
 const { post, hashtag, postHashtag } = require('../models').Models;
 const { isLoggedIn } = require('./middlewares');
+const { route } = require('./user');
 
 const router = express.Router();
 
@@ -53,6 +54,7 @@ router.post('/', isLoggedIn, upload2.none(), async (req, res, next) => {
       );
       await post_.addHashtags(result.map((r) => r[0]));
     }
+    res.redirect('/');
   } catch (error) {
     console.log(error);
   }
@@ -61,6 +63,16 @@ router.post('/', isLoggedIn, upload2.none(), async (req, res, next) => {
 router.get('/', (req, res) => {
   const twits = [];
   res.render('main', { title: 'NodeBird', twits });
+});
+
+router.post('/:id/delete', async (req, res, next) => {
+  try {
+    await post.destroy({ where: { id: req.params.id } });
+    res.send('success');
+  } catch (error) {
+    console.log(error);
+    next(error);
+  }
 });
 
 post.prototype.addHashtags = async function (hashtags) {

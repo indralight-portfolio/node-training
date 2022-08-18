@@ -39,14 +39,21 @@
       <input type="hidden" value="{{twit.user.id}}" class="twit-user-id" />
       <input type="hidden" value="{{twit.id}}" class="twit-id" />
       <div class="twit-author">{{twit.user.nick}}</div>
-      {% if not followerIdList.includes(twit.user.id) and twit.user.id !==
-      user.id %}
+      {% if user.id > 0 and twit.user.id !== user.id and not
+      followerIdList.includes(twit.user.id) %}
       <button class="twit-follow">팔로우하기</button>
+      {% elseif user.id > 0 and twit.user.id !== user.id %}
+      <button class="twit-notfollow">팔로잉끊기</button>
       {% endif %}
       <div class="twit-content">{{twit.content}}</div>
       {% if twit.img %}
       <div class="twit-img"><img src="{{twit.img}}" alt="섬네일" /></div>
       {% endif %}
+      <div class="spacer" style="clear: both"></div>
+      {% if twit.user.id === user.id %}
+      <button class="twit-delete">삭제</button>
+      {% endif %}
+      <div class="spacer" style="clear: both"></div>
     </div>
     {% endfor %}
   </div>
@@ -70,6 +77,14 @@
         });
     });
   }
+  if (document.getElementById('twit-form')) {
+    document
+      .getElementById('twit-form')
+      .addEventListener('submit', function (e) {
+        location.reload();
+      });
+  }
+
   document.querySelectorAll('.twit-follow').forEach(function (tag) {
     tag.addEventListener('click', function () {
       const myId = document.querySelector('#my-id');
@@ -86,6 +101,42 @@
                 console.error(err);
               });
           }
+        }
+      }
+    });
+  });
+  document.querySelectorAll('.twit-notfollow').forEach(function (tag) {
+    tag.addEventListener('click', function () {
+      const twitId = document.querySelector('#my-id');
+      if (myId) {
+        const userId = tag.parentNode.querySelector('.twit-id').value;
+        if (confirm('팔로잉을 끊으시겠습니까?')) {
+          axios
+            .post(`/user/${userId}/notfollow`)
+            .then(() => {
+              location.reload();
+            })
+            .catch((err) => {
+              console.error(err);
+            });
+        }
+      }
+    });
+  });
+  document.querySelectorAll('.twit-delete').forEach(function (tag) {
+    tag.addEventListener('click', function () {
+      const myId = document.querySelector('#my-id');
+      if (myId) {
+        const postId = tag.parentNode.querySelector('.twit-id').value;
+        if (confirm('twit 을 삭제하시겠습니까?')) {
+          axios
+            .post(`/post/${postId}/delete`)
+            .then(() => {
+              location.reload();
+            })
+            .catch((err) => {
+              console.error(err);
+            });
         }
       }
     });

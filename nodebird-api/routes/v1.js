@@ -1,10 +1,12 @@
 const express = require('express');
 const jwt = require('jsonwebtoken');
 
-const { verifyToken } = require('./middlewares');
-const { domain, user } = require('../models').Models;
+const { verifyToken, deprecated } = require('./middlewares');
+const { domain, user, post, hashtag } = require('../models').Models;
 
 const router = express.Router();
+
+router.use(deprecated);
 
 router.post('/token', async (req, res) => {
   const { clientSecret } = req.body;
@@ -30,8 +32,7 @@ router.post('/token', async (req, res) => {
       },
       process.env.JWT_SECRET,
       {
-        //expiresIn: '1m', // 분
-        expiresIn: '10s', // 분
+        expiresIn: '1m', // 분
         issuer: 'nodebird',
       }
     );
@@ -52,5 +53,57 @@ router.post('/token', async (req, res) => {
 router.get('/test', verifyToken, async (req, res) => {
   res.json(req.decoded);
 });
+
+router.get('/posts/my', verifyToken, async (req, res) => {
+  try {
+    const posts = await post.findAll({ where: { userId: req.decoded.id } });
+    console.log(post);
+    return res.json({
+      code: 200,
+      payload: posts,
+    });
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({
+      code: 500,
+      message: '서버 에러',
+    });
+  }
+});
+
+router.get('/posts/hashtag/:title', verifyToken, async (req, res) => {
+  try {
+    const hashtag_ = await hashtag.findOne({
+      where: { title: req.params.title },
+    });
+    if (!hashtag_) {
+      return res.json({
+        code: 404,
+        message: '검색결과가 없습니다.',
+      });
+    }
+    const posts = await hashtag.getPosts();
+    return res.json({
+      code: 200,
+      payload: posts,
+    });
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({
+      code: 500,
+      message: '서버 에러',
+    });
+  }
+});
+
+hashtag.prototype.getPosts = async function (option) {
+  option.include.push({
+    model: postHashtag,
+    as: 'postHashtags',
+    attributes: ['hashtagId'],
+  });
+  option.where = { '$postHashtags.hashtagId$': this.id };
+  return await post.findAll(option);
+};
 
 module.exports = router;

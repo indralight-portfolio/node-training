@@ -1,0 +1,18 @@
+{
+  "dialect": "mysql",
+  "host": "localhost",
+  "port": 3306,
+  "database": "nodeauction",
+  "username": "root",
+  "password": "12345678",
+  "directory": "./models",
+  "omitNull": true,
+  "additional": {
+    "freezeTableName": true,
+    "timestamps": true
+  },
+  "singularize": true,
+  "useDefine": false,
+  "caseModel": "p",
+  "lang": "es6"
+}

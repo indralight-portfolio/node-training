@@ -15,9 +15,9 @@ const v2Router = require('./routes/v2');
 const passportConfig = require('./passport');
 const { sequelize } = require('./models');
 
-const swaggerUi = require('swagger-ui-express');
-const spec = require('./swagger-output.json');
-// const { swaggerUi, spec } = require('./swagger');
+// const swaggerUi = require('swagger-ui-express');
+// const spec = require('./swagger-output.json');
+const { swaggerUi, spec } = require('./swagger');
 
 const app = express();
 passportConfig();

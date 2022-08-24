@@ -1,9 +1,9 @@
 const Sequelize = require('sequelize');
 module.exports = (sequelize, DataTypes) => {
-  return User.init(sequelize, DataTypes);
+  return Good.init(sequelize, DataTypes);
 }
 
-class User extends Sequelize.Model {
+class Good extends Sequelize.Model {
   static init(sequelize, DataTypes) {
   return super.init({
     id: {
@@ -12,36 +12,38 @@ class User extends Sequelize.Model {
       allowNull: false,
       primaryKey: true
     },
-    email: {
+    name: {
       type: DataTypes.STRING(40),
-      allowNull: true,
-      unique: "email"
-    },
-    nick: {
-      type: DataTypes.STRING(15),
       allowNull: false
     },
-    password: {
-      type: DataTypes.STRING(100),
+    img: {
+      type: DataTypes.STRING(200),
       allowNull: true
     },
-    provider: {
-      type: DataTypes.STRING(10),
-      allowNull: false,
-      defaultValue: "local"
-    },
-    snsId: {
-      type: DataTypes.STRING(30),
-      allowNull: true
-    },
-    money: {
+    price: {
       type: DataTypes.INTEGER,
       allowNull: false,
       defaultValue: 0
+    },
+    OwnerId: {
+      type: DataTypes.INTEGER,
+      allowNull: true,
+      references: {
+        model: 'users',
+        key: 'id'
+      }
+    },
+    SoldId: {
+      type: DataTypes.INTEGER,
+      allowNull: true,
+      references: {
+        model: 'users',
+        key: 'id'
+      }
     }
   }, {
     sequelize,
-    tableName: 'users',
+    tableName: 'goods',
     timestamps: true,
     paranoid: true,
     freezeTableName: true,
@@ -55,11 +57,17 @@ class User extends Sequelize.Model {
         ]
       },
       {
-        name: "email",
-        unique: true,
+        name: "OwnerId",
         using: "BTREE",
         fields: [
-          { name: "email" },
+          { name: "OwnerId" },
+        ]
+      },
+      {
+        name: "SoldId",
+        using: "BTREE",
+        fields: [
+          { name: "SoldId" },
         ]
       },
     ]

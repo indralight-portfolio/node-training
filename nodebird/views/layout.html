@@ -21,6 +21,7 @@
             <div>팔로워</div>
             <div class="count follower-count">{{followerCount}}</div>
           </div>
+          <div class="user-money">보유 자산: {{user.money}}원</div>
           <input id="my-id" type="hidden" value="{{user.id}}" />
           <a id="my-profile" href="/profile" class="btn">내 프로필</a>
           <a id="logout" href="/auth/logout" class="btn">로그아웃</a>
@@ -39,6 +40,11 @@
             <a id="kakao" href="/auth/kakao" class="btn">카카오톡</a>
           </form>
           {% endif %}
+          <hr />
+          <div>
+            <a id="my-profile" href="/" class="btn">메인</a>
+            <a id="logout" href="/auction" class="btn">옥션</a>
+          </div>
         </div>
       </div>
       {% block content %} {% endblock %}

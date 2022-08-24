@@ -4,6 +4,7 @@ const morgan = require('morgan');
 const path = require('path');
 const session = require('express-session');
 const nunjucks = require('nunjucks');
+const nunjucksDate = require('nunjucks-date');
 const dotenv = require('dotenv');
 const passport = require('passport');
 const helmet = require('helmet');
@@ -21,21 +22,25 @@ const pageRouter = require('./routes/page');
 const authRouter = require('./routes/auth');
 const postRouter = require('./routes/post');
 const userRouter = require('./routes/user');
+const auctionRouter = require('./routes/auction');
 const v1Router = require('./routes/v1');
 const { sequelize } = require('./models');
 const passportConfig = require('./passport');
+const checkAuction = require('./checkAuction');
 const logger = require('./logger');
 
 const { swaggerUi, spec } = require('./swagger');
 
 const app = express();
 passportConfig();
+checkAuction();
 app.set('port', process.env.PORT || 8001);
 app.set('view engine', 'html');
-nunjucks.configure('views', {
+const env = nunjucks.configure('views', {
   express: app,
   watch: true,
 });
+nunjucksDate.install(env);
 
 sequelize
   .sync({ force: false })
@@ -80,6 +85,7 @@ app.use('/', pageRouter);
 app.use('/auth', authRouter);
 app.use('/post', postRouter);
 app.use('/user', userRouter);
+app.use('/auction', auctionRouter);
 app.use('/v1', v1Router);
 app.use('/swagger', swaggerUi.serve, swaggerUi.setup(spec));
 
